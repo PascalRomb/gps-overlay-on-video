@@ -11,6 +11,7 @@ import peregin.gpv.gui.gauge.{ChartPainter, ElevationChart}
 import peregin.gpv.model.{InputValue, MinMax, Sonda, Telemetry}
 import peregin.gpv.util.Io
 
+import java.io.File
 import scala.jdk.CollectionConverters._
 
 object TemplatePanel {
@@ -59,10 +60,7 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
   model.addElement(TemplateEntry(new SkiingDashboard {}))
   model.addElement(TemplateEntry(new MotorBikingDashboard {}))
   model.addElement(TemplateEntry(new SailingDashboard {}))
-
-  //TODO make it load from configuration folder if exists.
-  val dynamicDashBoard = YamlResourceDashboardLoader.loadCpDashboard(classOf[Dashboard], "CyclingComplexDashboard.yaml")
-  model.addElement(TemplateEntry(dynamicDashBoard))
+  model.addAll(YamlResourceDashboardLoader.retrieveAllDynamicDashboards().toSeq.asJavaCollection)
 
   val templates = new JXList(model)
   templates.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
@@ -129,4 +127,5 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
       }
     }
   }
+
 }

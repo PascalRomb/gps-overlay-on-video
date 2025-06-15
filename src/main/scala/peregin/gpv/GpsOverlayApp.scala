@@ -181,7 +181,7 @@ object GpsOverlayApp extends SimpleSwingApplication
     log.debug(s"saving ${file.getAbsolutePath}")
     setup.shift = telemetryPanel.getShift
     setup.transparency = transparencySlider.percentage
-    setup.dashboardCode = templatePanel.getSelectedEntry.map(entry => entry.dashboard.getName())
+    setup.dashboardCode = templatePanel.getSelectedEntry.map(entry => entry.dashboard.getName())  //TODO here we need code instead of name.
     setup.saveFile(file.getAbsolutePath)
   }
 

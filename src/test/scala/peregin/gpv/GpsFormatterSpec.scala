@@ -4,7 +4,7 @@ import org.specs2.ScalaCheck
 import org.specs2.mutable.Specification
 import peregin.gpv.format.GpsFormatter
 
-
+//FIXME this test is locale based using String. Issue with dot and comma.
 class GpsFormatterSpec extends Specification with ScalaCheck {
 
   stopOnFail

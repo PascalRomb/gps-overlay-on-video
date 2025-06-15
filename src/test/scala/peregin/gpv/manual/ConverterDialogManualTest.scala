@@ -16,7 +16,7 @@ object ConverterDialogManualTest extends App {
   val file = "src/test/resources/project/water.json"
   val setup = Setup.loadFile(file)
   val telemetry = Telemetry.load(new File(setup.gpsPath.getOrElse(sys.error("gps file is not configured"))))
-  val template = TemplateEntry("Cycling", new CyclingDashboard {})
+  val template = TemplateEntry(new CyclingDashboard {})
   val dialog = new ConverterDialog(setup, telemetry, template)
   Goodies.center(dialog)
   dialog.open()

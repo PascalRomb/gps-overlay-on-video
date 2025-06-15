@@ -181,7 +181,7 @@ object GpsOverlayApp extends SimpleSwingApplication
     log.debug(s"saving ${file.getAbsolutePath}")
     setup.shift = telemetryPanel.getShift
     setup.transparency = transparencySlider.percentage
-    setup.dashboardCode = templatePanel.getSelectedEntry.map(entry => entry.name)
+    setup.dashboardCode = templatePanel.getSelectedEntry.map(entry => entry.dashboard.getName())
     setup.saveFile(file.getAbsolutePath)
   }
 
@@ -190,7 +190,7 @@ object GpsOverlayApp extends SimpleSwingApplication
     setup.shift = telemetryPanel.getShift
     setup.transparency = transparencySlider.percentage
     setup.units = unitChooser.selection.item
-    val template = templatePanel.getSelectedEntry.getOrElse(TemplateEntry("Cycling", new CyclingDashboard {}))
+    val template = templatePanel.getSelectedEntry.getOrElse(TemplateEntry(new CyclingDashboard {}))
     val dialog = new ConverterDialog(setup, telemetryPanel.telemetry, template, frame)
     Goodies.center(dialog)
     dialog.open()
@@ -222,6 +222,6 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   override def selected(entry: TemplatePanel.TemplateEntry): Unit = {
     dash = entry.dashboard
-    log.info(s"dashboard is ${entry.name}")
+    log.info(s"dashboard is ${dash.getName()}")
   }
 }

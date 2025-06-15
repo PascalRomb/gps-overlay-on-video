@@ -15,8 +15,9 @@ import scala.jdk.CollectionConverters._
 
 object TemplatePanel {
 
-  case class TemplateEntry(name: String, dashboard: Dashboard) {
-    override def toString: String = name
+  //TODO do we need it?
+  case class TemplateEntry(dashboard: Dashboard) {
+    override def toString: String = dashboard.getName()
   }
 
   trait Listener {
@@ -54,11 +55,14 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
   }
 
   val model = new DefaultListModel[TemplateEntry]
-  model.addElement(TemplateEntry("Cycling", new CyclingDashboard {}))
-  model.addElement(TemplateEntry("Skiing", new SkiingDashboard {}))
-  model.addElement(TemplateEntry("MotorBiking", new MotorBikingDashboard {}))
-  model.addElement(TemplateEntry("Sailing", new SailingDashboard {}))
-  model.addElement(TemplateEntry("Complex Cycling", YamlResourceDashboardLoader.loadCpDashboard(classOf[Dashboard], "CyclingComplexDashboard.yaml")))
+  model.addElement(TemplateEntry(new CyclingDashboard {}))
+  model.addElement(TemplateEntry(new SkiingDashboard {}))
+  model.addElement(TemplateEntry(new MotorBikingDashboard {}))
+  model.addElement(TemplateEntry(new SailingDashboard {}))
+
+  //TODO make it load from configuration folder if exists.
+  val dynamicDashBoard = YamlResourceDashboardLoader.loadCpDashboard(classOf[Dashboard], "CyclingComplexDashboard.yaml")
+  model.addElement(TemplateEntry(dynamicDashBoard))
 
   val templates = new JXList(model)
   templates.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
@@ -94,7 +98,7 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
           case e: ElevationChart => e.telemetry = Telemetry.sample()
           case _ =>
         }
-        (entry.name, dashboard)
+        (dashboard.getName(), dashboard)
     }.toMap
 
     private lazy val motorBikeSample = Sonda.sample().copy(speed = InputValue(Some(181), MinMax.max(230)))
@@ -106,7 +110,7 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
       g.setColor(Color.black)
       g.fillRect(0, 0, width, height)
 
-      getSelectedEntry.flatMap(e => name2Dashboard.get(e.name)).foreach { d =>
+      getSelectedEntry.flatMap(e => name2Dashboard.get(e.dashboard.getName())).foreach { d =>
         val sample = if (d.isInstanceOf[MotorBikingDashboard]) motorBikeSample else regularSample
         d.paintDashboard(g.asInstanceOf[Graphics2D], width, height, width / 5, sample)
       }
@@ -118,7 +122,7 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
   def refresh(setup: Setup): Unit = {
     if (setup.dashboardCode.isDefined) {
       for (i <- 0 until model.size()) {
-        if (model.get(i).name.equals(setup.dashboardCode.get)) {
+        if (model.get(i).dashboard.getName().equals(setup.dashboardCode.get)) {
           templates.setSelectedIndex(i)
           return
         }

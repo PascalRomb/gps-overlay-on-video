@@ -11,7 +11,7 @@ object YamlResourceDashboardLoader {
 
   def loadDashboard(inputStream: InputStream): Dashboard = {
     val resource: DashboardResource = YamlConverter.read[DashboardResource](inputStream)
-    return new DynamicResourceDashboard(resource.gauges.map(gauge => {
+    new DynamicResourceDashboard(resource.name, resource.gauges.map(gauge => {
       GaugeSetup(
         gauge.x,
         gauge.y,
@@ -35,7 +35,7 @@ object YamlResourceDashboardLoader {
     finally {
       input.close();
     }
-    return dashboard
+    dashboard
   }
 
   @JsonIdentityInfo(generator = classOf[ObjectIdGenerators.None])

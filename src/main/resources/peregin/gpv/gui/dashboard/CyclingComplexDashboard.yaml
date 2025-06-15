@@ -1,5 +1,5 @@
 code: CyclingComplexDashboard
-name: Cycling Complex Dashboard
+name: Cycling Complex Dashboard Scemo
 gauges:
   - name: speed
     clazz: peregin.gpv.gui.gauge.RadialSpeedGauge

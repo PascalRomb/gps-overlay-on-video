@@ -7,8 +7,10 @@ import java.awt.geom.AffineTransform
 import scala.swing.Graphics2D
 
 
-class DynamicResourceDashboard(gauges: Seq[GaugeSetup]) extends Dashboard {
+class DynamicResourceDashboard(name: String, gauges: Seq[GaugeSetup]) extends Dashboard {
   private val definedGauges: Array[GaugeSetup] = gauges.toArray
+
+  override def getName(): String = name
 
   override def paintDashboard(g: Graphics2D, imageWidth: Int, imageHeight: Int, gaugeSize: Int, sonda: Sonda): Unit = {
     definedGauges.foreach(gauge => {
@@ -23,6 +25,6 @@ class DynamicResourceDashboard(gauges: Seq[GaugeSetup]) extends Dashboard {
   }
 
   override def gauges(): Seq[GaugePainter] = {
-    return definedGauges.map(setup => setup.gauge).toSeq;
+    definedGauges.map(setup => setup.gauge).toSeq;
   }
 }

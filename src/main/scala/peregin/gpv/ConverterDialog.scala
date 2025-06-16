@@ -45,7 +45,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
   private val chooser = new FileChooserPanel("File name of the new video:", save, ExtensionFilters.video, false)
   chooser.fileInput.text = setup.outputPath.getOrElse("")
 
-  private val dashboardLabel = new Label(s"Dashboard: ${template.name}", EmptyIcon, Alignment.Left)
+  private val dashboardLabel = new Label(s"Dashboard: ${template.dashboard.getName()}", EmptyIcon, Alignment.Left)
 
   private var startTimeMs: Long = _;
   private var stopped = false;

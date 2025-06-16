@@ -7,7 +7,7 @@ import javax.swing.filechooser.FileNameExtensionFilter
  */
 object ExtensionFilters {
 
-  val video = new FileNameExtensionFilter("Video files (mp4)", "mp4")
+  val video = new FileNameExtensionFilter("Video files (mp4, MOV)", "mp4", "MOV")
   val project = new FileNameExtensionFilter("project file (json)", "json")
   val gps = new FileNameExtensionFilter("GPS files (gpx)", "gpx")
 }

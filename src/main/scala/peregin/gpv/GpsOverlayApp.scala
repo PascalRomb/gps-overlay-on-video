@@ -38,19 +38,42 @@ object GpsOverlayApp extends SimpleSwingApplication
   transparencySlider.percentage = 80
   private val unitChooser = new ComboBox(Seq("Metric", "Marine","Standard"))
   private val templatePanel = new TemplatePanel(GpsOverlayApp.this)
+  System.setProperty("apple.laf.useScreenMenuBar", "true")
   val frame = new MainFrame {
-    contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
-      val toolbar = new JToolBar
-      toolbar.add(new ImageButton("images/new.png", "New", newProject()))
-      toolbar.add(new ImageButton("images/open.png", "Open", openProject()))
-      toolbar.add(new ImageButton("images/save.png", "Save", saveProject()))
-      toolbar.addSeparator()
-      toolbar.add(new ImageButton("images/video.png", "Convert", convertProject()))
-      add(toolbar, "span 2, wrap")
 
+    val nativeMenuBar = new JMenuBar
+    val fileMenu = new JMenu("File")
+
+    fileMenu.add(new JMenuItem(new AbstractAction("New") {
+      def actionPerformed(e: java.awt.event.ActionEvent): Unit = newProject()
+    }))
+    fileMenu.add(new JMenuItem(new AbstractAction("Open...") {
+      def actionPerformed(e: java.awt.event.ActionEvent): Unit = openProject()
+    }))
+    fileMenu.add(new JMenuItem(new AbstractAction("Save") {
+      def actionPerformed(e: java.awt.event.ActionEvent): Unit = saveProject()
+    }))
+    val exportMenuItem = new JMenuItem(new AbstractAction("Export...") {
+      def actionPerformed(e: java.awt.event.ActionEvent): Unit = convertProject()
+    })
+    exportMenuItem.setEnabled(templatePanel.getSelectedEntry.isDefined)
+    fileMenu.add(exportMenuItem)
+
+    fileMenu.addSeparator()
+    fileMenu.add(new JMenuItem(new AbstractAction("Exit") {
+      def actionPerformed(e: java.awt.event.ActionEvent): Unit = sys.exit(0)
+    }))
+
+    nativeMenuBar.add(fileMenu)
+    peer.setJMenuBar(nativeMenuBar)
+
+
+    contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
       private val unitPanel = new MigPanel("ins 0 5 0 5", "", "") {
-        add(new Label("Units"), "")
+        add(new Label("Units"), "span 2")
         add(unitChooser, "")
+        //add(new Label("Template"), "span 4")
+        //add(unitChooser, "")
       }
       add(unitPanel, "span 2, wrap")
 

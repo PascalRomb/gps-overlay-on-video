@@ -13,7 +13,15 @@ class FileChooserPanel(info: String, action: File => Unit, filter: FileNameExten
   val browseButton = new Button("Browse")
   add(browseButton, "")
   val fileInput = new TextArea("")
-  add(fileInput, "pushx, growx, wrap")
+  fileInput.lineWrap = false
+  fileInput.wordWrap  = false
+  fileInput.peer.setCaretPosition(0)
+  val scrollPane = new ScrollPane(fileInput) {
+    horizontalScrollBarPolicy = ScrollPane.BarPolicy.Never
+    verticalScrollBarPolicy = ScrollPane.BarPolicy.Never
+  }
+
+  add(scrollPane, "growx, pushx, wrap")
 
   listenTo(browseButton)
   reactions += {

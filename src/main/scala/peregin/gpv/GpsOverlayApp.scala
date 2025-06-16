@@ -11,7 +11,6 @@ import peregin.gpv.video._
 import java.awt.Dimension
 import java.awt.image.BufferedImage
 import java.io.File
-import java.net.URI
 import javax.swing._
 import scala.swing._
 import scala.swing.event.{SelectionChanged, ValueChanged}
@@ -55,7 +54,6 @@ object GpsOverlayApp extends SimpleSwingApplication
       }
       add(unitPanel, "span 2, wrap")
 
-      //add(titled("Video", videoPanel), "pushy, width 60%")
       add(titled("Video", new MigPanel("ins 0, fill", "[fill]", "[fill]") {
         add(new MigPanel("ins 40 0 40 0, fill", "[fill]", "[fill]") {
           add(new JXLabel("Transparency") {
@@ -69,17 +67,6 @@ object GpsOverlayApp extends SimpleSwingApplication
         add(videoPanel, "grow, push")
       }), "pushy, width 60%")
       add(titled("Telemetry Data", telemetryPanel), "pushy, width 40%, wrap")
-
-      val gaugePanel = new GaugePanel
-      add(titled("Gauges", new ScrollPane(gaugePanel)), "height 30%")
-      add(titled("Dashboard templates", templatePanel), "height 30%, wrap")
-
-      val statusPanel = new JXStatusBar
-      statusPanel.add(statusLabel)
-      add(statusPanel, "pushx, growx")
-      val link = new JXHyperlink()
-      link.setURI(new URI("www.velocorner.com"))
-      add(link, "split, w 150!, align right")
     }
   }
 

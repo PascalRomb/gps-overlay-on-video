@@ -36,10 +36,10 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
   val mapKit = new MapPanel
   private val mapKitWrapper = Component.wrap(mapKit)
-  add(mapKit, "span 2, growx, wrap")
+  add(mapKit, "span 2,height 70%, growx, wrap")
 
   val altitude = new AltitudePanel
-  add(altitude, "span 2, pushy, grow, gaptop 10, wrap")
+  add(altitude, "span 2, height 30%, grow, gaptop 10, wrap")
 
   val direction = new ComboBox(Seq("Forward", "Backward"))
   val spinner = new DurationSpinner

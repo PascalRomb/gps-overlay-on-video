@@ -13,6 +13,8 @@ import peregin.gpv.util.Io
 
 import scala.jdk.CollectionConverters._
 
+
+//TODO remove it.
 object TemplatePanel {
 
   //TODO do we need it?

@@ -6,9 +6,8 @@ import peregin.gpv.model.Telemetry
 import peregin.gpv.{ConverterDialog, Setup}
 import peregin.gpv.gui.Goodies
 import peregin.gpv.gui.TemplatePanel.TemplateEntry
-import peregin.gpv.gui.dashboard.CyclingDashboard
 
-
+/*
 object ConverterDialogManualTest extends App {
 
   Goodies.initLookAndFeel()
@@ -22,3 +21,4 @@ object ConverterDialogManualTest extends App {
   dialog.open()
   sys.exit()
 }
+*/

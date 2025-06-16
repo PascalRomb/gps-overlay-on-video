@@ -6,12 +6,11 @@ import javax.swing.event.ListSelectionEvent
 import org.jdesktop.swingx.JXList
 import peregin.gpv.Setup
 import peregin.gpv.gui.TemplatePanel.{Listener, TemplateEntry}
-import peregin.gpv.gui.dashboard.{CyclingDashboard, Dashboard, MotorBikingDashboard, SailingDashboard, SkiingDashboard, YamlResourceDashboardLoader}
-import peregin.gpv.gui.gauge.{ChartPainter, ElevationChart}
+import peregin.gpv.gui.dashboard.{Dashboard, YamlDashboardLoader}
+import peregin.gpv.gui.gauge.{ElevationChart}
 import peregin.gpv.model.{InputValue, MinMax, Sonda, Telemetry}
 import peregin.gpv.util.Io
 
-import java.io.File
 import scala.jdk.CollectionConverters._
 
 object TemplatePanel {
@@ -32,7 +31,7 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
 
   class TemplateCellRenderer extends JLabel with ListCellRenderer[TemplateEntry] {
 
-    val anIcon: Icon = Io.loadIcon("images/video.png")
+    val anIcon: Icon = Io.loadIcon("images/video.png") //TODO change that
 
     setOpaque(true)
 
@@ -55,16 +54,14 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
     }
   }
 
+  //TODO make it scrollable
   val model = new DefaultListModel[TemplateEntry]
-  model.addElement(TemplateEntry(new CyclingDashboard {}))
-  model.addElement(TemplateEntry(new SkiingDashboard {}))
-  model.addElement(TemplateEntry(new MotorBikingDashboard {}))
-  model.addElement(TemplateEntry(new SailingDashboard {}))
-  model.addAll(YamlResourceDashboardLoader.retrieveAllDynamicDashboards().toSeq.asJavaCollection)
+  model.addAll(YamlDashboardLoader.retrieveAllDefaultDashboards().toSeq.asJavaCollection)
+  model.addAll(YamlDashboardLoader.retrieveAllCustomDashboards().toSeq.asJavaCollection)
 
   val templates = new JXList(model)
   templates.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
-  templates.setSelectedIndex(0)
+  //templates.setSelectedIndex(0)
   templates.setFont(new Font("Arial", Font.BOLD, 18))
   templates.setCellRenderer(new TemplateCellRenderer)
 
@@ -84,6 +81,7 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
     }
   })
 
+  //TODO remove that
   // shows the current selection
   val preview = new JPanel() {
 
@@ -99,9 +97,6 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
         (dashboard.getName(), dashboard)
     }.toMap
 
-    private lazy val motorBikeSample = Sonda.sample().copy(speed = InputValue(Some(181), MinMax.max(230)))
-    private lazy val regularSample = Sonda.sample()
-
     override def paint(g: Graphics): Unit = {
       val width = getWidth
       val height = getHeight
@@ -109,8 +104,7 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
       g.fillRect(0, 0, width, height)
 
       getSelectedEntry.flatMap(e => name2Dashboard.get(e.dashboard.getName())).foreach { d =>
-        val sample = if (d.isInstanceOf[MotorBikingDashboard]) motorBikeSample else regularSample
-        d.paintDashboard(g.asInstanceOf[Graphics2D], width, height, width / 5, sample)
+        d.paintDashboard(g.asInstanceOf[Graphics2D], width, height, width / 5, Sonda.sample())
       }
     }
   }

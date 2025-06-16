@@ -10,12 +10,17 @@ import java.io.{File, FileInputStream, InputStream}
 //FIXME Note that this class will import all dashboard in the folder.
 // we can optimize that in order to load just the file name and then load the dashboard only when click on selection.
 
-object YamlResourceDashboardLoader extends Logging{
+object YamlDashboardLoader extends Logging{
   val customDashboardFolderName = "customDashboardTemplates"
+  val resourceFolderName = "defaultDashboardTemplates"
 
-  def retrieveAllDynamicDashboards(): Array[TemplateEntry] = {
+  def retrieveAllDefaultDashboards(): Array[TemplateEntry] = {
+    Array("cycling.yaml").map(name => loadAndConvertDefaultToDashboardTemplate(name))
+  }
+
+  def retrieveAllCustomDashboards(): Array[TemplateEntry] = {
     createDashboardTemplatesFolderIfNotExists()
-    val templates = listAllYamlFilenames()
+    val templates = listAllYamlFilenames(customDashboardFolderName)
     templates.map(filename => loadAndConvertToDashboardTemplate(filename))
   }
 
@@ -30,14 +35,24 @@ object YamlResourceDashboardLoader extends Logging{
     }
   }
 
-  private def listAllYamlFilenames(): Array[String] = {
-    val dir = new File(customDashboardFolderName)
+  private def listAllYamlFilenames(folderName: String): Array[String] = {
+    val dir = new File(folderName)
     dir.listFiles((_, name) => name.endsWith(".yml") || name.endsWith(".yaml")).map(el => el.getName)
   }
 
   private def loadAndConvertToDashboardTemplate(file: String): TemplateEntry = {
     val dashboardFileName = s"$customDashboardFolderName/$file"
     val inputStream: InputStream = new FileInputStream(dashboardFileName)
+    try {
+      TemplateEntry(convertToDashboard(inputStream))
+    } finally {
+      inputStream.close();
+    }
+  }
+
+  private def loadAndConvertDefaultToDashboardTemplate(file: String): TemplateEntry = {
+    val dashboardFileName = s"$resourceFolderName/$file"
+    val inputStream: InputStream = classOf[Dashboard].getResourceAsStream(dashboardFileName)
     try {
       TemplateEntry(convertToDashboard(inputStream))
     } finally {

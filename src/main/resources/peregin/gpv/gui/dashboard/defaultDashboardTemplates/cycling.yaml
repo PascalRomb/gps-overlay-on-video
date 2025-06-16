@@ -1,0 +1,14 @@
+code: Cycling
+name: Cycling (classic)
+gauges:
+  - name: elevationProfile
+    clazz: peregin.gpv.gui.gauge.ElevationChart
+    x: 0.663
+    y: 0.85
+    width: 0.34
+    height: 0.15
+  - name: speed
+    clazz: peregin.gpv.gui.gauge.RadialSpeedGauge
+    x: 0.015
+    y: 0.78
+    size: 0.23

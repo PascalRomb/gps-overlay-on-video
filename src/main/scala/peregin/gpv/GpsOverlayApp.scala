@@ -1,19 +1,18 @@
 package peregin.gpv
 
+import info.BuildInfo
+import org.jdesktop.swingx._
+import peregin.gpv.gui._
+import peregin.gpv.gui.dashboard.DashboardPainter
+import peregin.gpv.model.Telemetry
+import peregin.gpv.util.{Io, Logging, Timed}
+import peregin.gpv.video._
+
 import java.awt.Dimension
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URI
 import javax.swing._
-import info.BuildInfo
-import org.jdesktop.swingx._
-import peregin.gpv.gui.TemplatePanel.TemplateEntry
-import peregin.gpv.gui._
-import peregin.gpv.gui.dashboard.{CyclingDashboard, DashboardPainter}
-import peregin.gpv.model.Telemetry
-import peregin.gpv.util.{Io, Logging, Timed}
-import peregin.gpv.video._
-
 import scala.swing._
 import scala.swing.event.{SelectionChanged, ValueChanged}
 
@@ -190,7 +189,7 @@ object GpsOverlayApp extends SimpleSwingApplication
     setup.shift = telemetryPanel.getShift
     setup.transparency = transparencySlider.percentage
     setup.units = unitChooser.selection.item
-    val template = templatePanel.getSelectedEntry.getOrElse(TemplateEntry(new CyclingDashboard {}))
+    val template = templatePanel.getSelectedEntry.get
     val dialog = new ConverterDialog(setup, telemetryPanel.telemetry, template, frame)
     Goodies.center(dialog)
     dialog.open()

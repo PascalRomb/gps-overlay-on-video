@@ -56,7 +56,6 @@ object GpsOverlayApp extends SimpleSwingApplication
     val exportMenuItem = new JMenuItem(new AbstractAction("Export...") {
       def actionPerformed(e: java.awt.event.ActionEvent): Unit = convertProject()
     })
-    exportMenuItem.setEnabled(templatePanel.getSelectedEntry.isDefined)
     fileMenu.add(exportMenuItem)
 
     fileMenu.addSeparator()
@@ -72,8 +71,8 @@ object GpsOverlayApp extends SimpleSwingApplication
       private val unitPanel = new MigPanel("ins 0 5 0 5", "", "") {
         add(new Label("Units"), "span 2")
         add(unitChooser, "")
-        //add(new Label("Template"), "span 4")
-        //add(unitChooser, "")
+        add(new Label("Template"), "span 4")
+        add(templatePanel, "")
       }
       add(unitPanel, "span 2, wrap")
 

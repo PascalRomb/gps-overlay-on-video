@@ -120,6 +120,7 @@ def welcomeMessage = Def.setting {
       |Useful sbt tasks:
       |${item("run")} - starts the application
       |${item("release")} - generates a new release
+      |${item("assembly")} - generates a new jar
       """.stripMargin
 }
 

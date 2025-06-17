@@ -1,20 +1,15 @@
 package peregin.gpv.gui
 
-import java.awt.event.{ActionEvent, KeyEvent}
-import java.awt.{Point, Toolkit}
-import javax.swing.{JComponent, KeyStroke, UIManager}
-
-import com.jgoodies.looks.plastic.{Plastic3DLookAndFeel, PlasticTheme}
-import com.jgoodies.looks.plastic.PlasticLookAndFeel._
-
+import com.formdev.flatlaf.FlatDarkLaf
 import org.jdesktop.swingx.JXBusyLabel
 
-import scala.swing.{Component, Dialog, Label, Window}
-import scala.util.control.NonFatal
-import scala.jdk.CollectionConverters._
-
+import java.awt.event.{ActionEvent, KeyEvent}
+import java.awt.{Point, Toolkit}
+import javax.swing.{JComponent, JFrame, KeyStroke, UIManager}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
+import scala.swing.{Component, Dialog, Label, Window}
+import scala.util.control.NonFatal
 
 
 object Goodies {
@@ -23,9 +18,10 @@ object Goodies {
   def initLookAndFeel(): Unit = {
     sys.props += "apple.laf.useScreenMenuBar" -> "true"
     sys.props += "com.apple.mrj.application.apple.menu.about.name" -> "GPSonVideo"
-    val theme = getInstalledThemes.asScala.map(_.asInstanceOf[PlasticTheme]).find(_.getName == "Dark Star")
-    theme.foreach(setPlasticTheme)
-    UIManager.setLookAndFeel(new Plastic3DLookAndFeel())
+    sys.props += "apple.awt.application.appearance" -> "system"
+    UIManager.setLookAndFeel(new FlatDarkLaf())
+    JFrame.setDefaultLookAndFeelDecorated(true)
+
   }
 
   def center(w: Window): Unit = {

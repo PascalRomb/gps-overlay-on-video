@@ -16,7 +16,7 @@ class FileChooserPanel(info: String, action: File => Unit, filter: FileNameExten
   fileInput.lineWrap = false
   fileInput.wordWrap  = false
   fileInput.peer.setCaretPosition(0)
-  val scrollPane = new ScrollPane(fileInput) {
+  val scrollPane: ScrollPane = new ScrollPane(fileInput) {
     horizontalScrollBarPolicy = ScrollPane.BarPolicy.Never
     verticalScrollBarPolicy = ScrollPane.BarPolicy.Never
   }

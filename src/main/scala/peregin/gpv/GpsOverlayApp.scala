@@ -39,7 +39,7 @@ object GpsOverlayApp extends SimpleSwingApplication
   private val unitChooser = new ComboBox(Seq("Metric", "Marine","Standard"))
   private val templatePanel = new TemplatePanel(GpsOverlayApp.this)
   System.setProperty("apple.laf.useScreenMenuBar", "true")
-  val frame = new MainFrame {
+  val frame:MainFrame = new MainFrame {
 
     val nativeMenuBar = new JMenuBar
     val fileMenu = new JMenu("File")
@@ -76,7 +76,7 @@ object GpsOverlayApp extends SimpleSwingApplication
       }
       add(unitPanel, "span 2, wrap")
 
-      add(titled("Video", new MigPanel("ins 0, fill", "[fill]", "[fill]") {
+      val videoTemplatePanel: MigPanel = new MigPanel("ins 0, fill", "[fill]", "[fill]") {
         add(new MigPanel("ins 40 0 40 0, fill", "[fill]", "[fill]") {
           add(new JXLabel("Transparency") {
             setTextRotation(3*Math.PI/2)
@@ -87,8 +87,9 @@ object GpsOverlayApp extends SimpleSwingApplication
           add(transparencySlider, "")
         }, "align left")
         add(videoPanel, "grow, push")
-      }), "pushy, width 60%")
-      add(titled("Telemetry Data", telemetryPanel), "pushy, width 40%, wrap")
+      }
+      add(videoTemplatePanel, "pushy, width 60%")
+      add(telemetryPanel, "pushy, width 40%, wrap")
     }
   }
 

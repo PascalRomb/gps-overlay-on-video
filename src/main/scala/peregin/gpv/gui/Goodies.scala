@@ -22,6 +22,9 @@ object Goodies {
     UIManager.setLookAndFeel(new FlatDarkLaf())
     JFrame.setDefaultLookAndFeelDecorated(true)
 
+
+    UIManager.put("Slider.thumbColor", new java.awt.Color(150, 150, 150))   // knob
+    UIManager.put("Slider.focusColor", new java.awt.Color(160, 160, 160))     // focus knob
   }
 
   def center(w: Window): Unit = {

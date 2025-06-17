@@ -39,7 +39,8 @@ val moreJavaOptions = Seq(
   "--add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED",
   "--add-opens=java.base/java.lang=ALL-UNNAMED",
   "--add-opens=java.base/java.util=ALL-UNNAMED",
-  "--add-opens=java.base/java.net=ALL-UNNAMED"
+  "--add-opens=java.base/java.net=ALL-UNNAMED",
+  "--enable-native-access=ALL-UNNAMED"
 )
 javaOptions ++= moreJavaOptions
 javacOptions ++= Seq("-source", "17", "-target", "17")
@@ -131,8 +132,6 @@ libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion
 libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
 libraryDependencies += "org.swinglabs" % "swingx-core" % "1.6.2-2"
 libraryDependencies += "org.swinglabs" % "swingx-ws" % "1.0"
-libraryDependencies += "com.jgoodies" % "looks" % "2.2.2" //TODO remove
-libraryDependencies += "com.jgoodies" % "jgoodies-common" % "1.8.1" //TDOO remove
 libraryDependencies += "com.miglayout" % "miglayout" % "3.7.4"
 libraryDependencies += "org.bytedeco" % "javacv" % javacvVersion
 libraryDependencies += "org.bytedeco" % "javacv-platform" % javacvVersion

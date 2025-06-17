@@ -104,8 +104,7 @@ object GpsOverlayApp extends SimpleSwingApplication
       setup.units = item
   }
 
-  frame.title = s"GPS data overlay onto video - built ${BuildInfo.buildTime}"
-  frame.iconImage = Io.loadImage("images/video.png")
+  frame.iconImage = Io.loadImage("images/video.png") //FIXME
   frame.size = new Dimension(1500, 1000)
   Goodies.center(frame)
   frame.maximize()

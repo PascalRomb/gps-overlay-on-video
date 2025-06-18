@@ -122,7 +122,11 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
 
     log.info(s"reading video file from $videoInputFile")
     val reader = new FFmpegFrameGrabber(videoInputFile)
+
+    //reader.setTimestamp() //TODO
     reader.start()
+
+
     val durationInMillis = reader.getLengthInTime / 1000
     durationLabel.text = s"${TimePrinter.printDuration(durationInMillis)}"
 
@@ -227,6 +231,11 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
     var imageType = -1
     var stopped: Boolean = false;
     while ({ stopped = stopIndicator(); !stopped } && { frame = grabber.grab; frame != null }) {
+      //TODO
+      //val timestamp: Long = grabber.getTimestamp
+      //if (timestamp > endTime) {
+        //return
+      //}
       recorder.setTimestamp(frame.timestamp)
       if (frame.`type` eq Frame.Type.VIDEO) {
         if (imageType != Java2DFrameConverter.getBufferedImageType(frame)) {

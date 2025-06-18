@@ -6,7 +6,7 @@ import org.jdesktop.swingx.{JXMapKit, JXMapViewer}
 import peregin.gpv.model.Telemetry
 
 import java.awt.event.{MouseAdapter, MouseEvent}
-import java.awt.{Color => _, Component => _, Dimension => _, Graphics2D => _, _}
+import java.awt.{Color, Color => _, Component => _, Dimension => _, Graphics2D => _, _}
 import javax.swing.{Box, BoxLayout, JButton, JPanel}
 import scala.swing._
 import scala.swing.event.MouseClicked

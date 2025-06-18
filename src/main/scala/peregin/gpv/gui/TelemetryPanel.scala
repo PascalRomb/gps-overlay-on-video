@@ -30,28 +30,16 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
   val direction = new ComboBox(Seq("Forward", "Backward"))
   val spinner = new DurationSpinner
-  private val elevationMode = new ButtonGroup() {
-    buttons += new RadioButton("Distance") {
-      selected = true
-      icon = new ImageIcon(Io.loadImage("images/distance.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH))
-      tooltip = "Distance"
-    }
-    buttons += new RadioButton("Time") {
-      selected = false
-      icon = new ImageIcon(Io.loadImage("images/time.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH))
-      tooltip = "Time"
-    }
-  }
-  private val controlPanel = new MigPanel("ins 0 5 0 5", "", "") {
+
+  //TODO want it at the center
+  private val controlPanel = new MigPanel("ins 0 5 0 5", "[center][center][center]", "") {
     add(new Label("Shift"), "")
     add(direction, "")
-    add(spinner, "align left")
-    add(new BoxPanel(Orientation.Horizontal) {contents ++= elevationMode.buttons}, "pushx, align right")
+    add(spinner, "")
   }
-  add(controlPanel, "gaptop 5, gapbottom 5, growx")
+  add(controlPanel, "gaptop 5, gapbottom 5")
 
   listenTo(altitude.mouse.clicks, mapKit)
-  elevationMode.buttons.foreach(ab => listenTo(ab))
 
   reactions += {
     case MouseClicked(`altitude`, pt, _, 1, false) => timed(s"time/elevation for x=${pt.x}") {
@@ -66,12 +54,6 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
       altitude.refreshPoi(sonda)
       mapKit.refreshPoi(sonda.map(_.location))
     }
-    case ButtonClicked(_: RadioButton) =>
-      val mode = elevationMode.selected.map(_.text).getOrElse(elevationMode.buttons.head.text) match {
-        case "Distance" => Mode.DistanceBased
-        case "Time" => Mode.TimeBased
-      }
-      altitude.refresh(mode)
   }
 
   def refresh(setup: Setup, telemetry: Telemetry): Unit = {

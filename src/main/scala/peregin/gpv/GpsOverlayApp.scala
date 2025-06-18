@@ -104,7 +104,8 @@ object GpsOverlayApp extends SimpleSwingApplication
       setup.units = item
   }
 
-  frame.iconImage = Io.loadImage("images/video.png") //FIXME
+  //TODO want that
+  //frame.iconImage = Io.loadImage("mountain.svg")
   frame.size = new Dimension(1500, 1000)
   Goodies.center(frame)
   frame.maximize()

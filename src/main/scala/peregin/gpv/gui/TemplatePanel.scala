@@ -1,22 +1,12 @@
 package peregin.gpv.gui
 
-import java.awt.{Color, Component, Font, Graphics, Graphics2D}
-import javax.swing._
-import javax.swing.event.ListSelectionEvent
-import org.jdesktop.swingx.JXList
 import peregin.gpv.Setup
 import peregin.gpv.gui.TemplatePanel.{Listener, TemplateEntry}
-import peregin.gpv.gui.dashboard.{CyclingDashboard, Dashboard, MotorBikingDashboard, SailingDashboard, SkiingDashboard, YamlResourceDashboardLoader}
-import peregin.gpv.gui.gauge.{ChartPainter, ElevationChart}
-import peregin.gpv.model.{InputValue, MinMax, Sonda, Telemetry}
-import peregin.gpv.util.Io
+import peregin.gpv.gui.dashboard.{Dashboard, YamlDashboardLoader}
 
-import java.io.File
-import scala.jdk.CollectionConverters._
+import javax.swing._
 
 object TemplatePanel {
-
-  //TODO do we need it?
   case class TemplateEntry(dashboard: Dashboard) {
     override def toString: String = dashboard.getName()
   }
@@ -30,98 +20,34 @@ object TemplatePanel {
 // save/load/use dashboard templates (set of already selected and aligned gauges)
 class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fill]") {
 
-  class TemplateCellRenderer extends JLabel with ListCellRenderer[TemplateEntry] {
+  val templates: Seq[TemplateEntry] =
+    YamlDashboardLoader.retrieveAllDefaultDashboards().toSeq ++
+      YamlDashboardLoader.retrieveAllCustomDashboards().toSeq
 
-    val anIcon: Icon = Io.loadIcon("images/video.png")
+  val comboModel = new DefaultComboBoxModel[TemplateEntry](templates.toArray)
 
-    setOpaque(true)
+  val templatesCombo = new JComboBox[TemplateEntry](comboModel)
+  listener.selected(getSelectedEntry.orNull)
+  add(templatesCombo, "growx, pushx")
 
-    override def getListCellRendererComponent(list: JList[_ <: TemplateEntry], value: TemplateEntry, index: Int,
-                                              isSelected: Boolean, cellHasFocus: Boolean): Component = {
 
-      if (isSelected) {
-        setBackground(list.getSelectionBackground)
-        setForeground(list.getSelectionForeground)
-      } else {
-        setBackground(list.getBackground)
-        setForeground(list.getForeground)
-      }
-
-      setFont(list.getFont)
-      setText(value.toString)
-
-      setIcon(anIcon)
-      this
-    }
-  }
-
-  val model = new DefaultListModel[TemplateEntry]
-  model.addElement(TemplateEntry(new CyclingDashboard {}))
-  model.addElement(TemplateEntry(new SkiingDashboard {}))
-  model.addElement(TemplateEntry(new MotorBikingDashboard {}))
-  model.addElement(TemplateEntry(new SailingDashboard {}))
-  model.addAll(YamlResourceDashboardLoader.retrieveAllDynamicDashboards().toSeq.asJavaCollection)
-
-  val templates = new JXList(model)
-  templates.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
-  templates.setSelectedIndex(0)
-  templates.setFont(new Font("Arial", Font.BOLD, 18))
-  templates.setCellRenderer(new TemplateCellRenderer)
-
-  add(templates, "grow, push")
-
-  def getSelectedEntry: Option[TemplateEntry] = templates.getSelectedValue match {
+  def getSelectedEntry: Option[TemplateEntry] = templatesCombo.getSelectedItem match {
     case entry: TemplateEntry => Some(entry)
     case _ => None
   }
-
-  templates.addListSelectionListener((e: ListSelectionEvent) => {
-    if (!e.getValueIsAdjusting) {
-      getSelectedEntry.foreach { entry =>
-        listener.selected(entry)
-        preview.repaint()
-      }
-    }
-  })
-
-  // shows the current selection
-  val preview = new JPanel() {
-
-    // clone painters
-    private val name2Dashboard = model.elements().asScala.map {
-      entry =>
-        val dashboard = entry.dashboard.clone()
-        // setup with default values
-        dashboard.gauges().foreach {
-          case e: ElevationChart => e.telemetry = Telemetry.sample()
-          case _ =>
-        }
-        (dashboard.getName(), dashboard)
-    }.toMap
-
-    private lazy val motorBikeSample = Sonda.sample().copy(speed = InputValue(Some(181), MinMax.max(230)))
-    private lazy val regularSample = Sonda.sample()
-
-    override def paint(g: Graphics): Unit = {
-      val width = getWidth
-      val height = getHeight
-      g.setColor(Color.black)
-      g.fillRect(0, 0, width, height)
-
-      getSelectedEntry.flatMap(e => name2Dashboard.get(e.dashboard.getName())).foreach { d =>
-        val sample = if (d.isInstanceOf[MotorBikingDashboard]) motorBikeSample else regularSample
-        d.paintDashboard(g.asInstanceOf[Graphics2D], width, height, width / 5, sample)
-      }
+  templatesCombo.addActionListener { _ =>
+    if (getSelectedEntry.isDefined) {
+      listener.selected(getSelectedEntry.get)
     }
   }
 
-  add(preview, "grow, push")
-
   def refresh(setup: Setup): Unit = {
     if (setup.dashboardCode.isDefined) {
-      for (i <- 0 until model.size()) {
-        if (model.get(i).dashboard.getName().equals(setup.dashboardCode.get)) {
-          templates.setSelectedIndex(i)
+      comboModel.setSelectedItem()
+      for (i <- 0 until comboModel.getSize) {
+        val element = comboModel.getElementAt(i)
+        if (element.dashboard.getName().equals(setup.dashboardCode.get)) {
+          comboModel.setSelectedItem(element)
           return
         }
       }

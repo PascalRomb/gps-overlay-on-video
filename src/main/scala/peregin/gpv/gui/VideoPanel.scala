@@ -23,17 +23,18 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
   val elapsed = new Label(s"${TimePrinter.printDuration(0)}")
   val duration = new Label(s"${TimePrinter.printDuration(0)}")
   val slider = new PercentageSlider
-  val startStopButton = new StartStopButton("images/play.png", "Play", "images/pause.png", "Pause", playOrPauseVideo())
-  val controlPanel = new MigPanel("ins 0", "", "") {
-    val progress = new MigPanel("ins 0", "", "") {
+  val startStopButton =  new StartStopButton(playOrPauseVideo())
+  val controlPanel: MigPanel = new MigPanel("ins 0", "", "") {
+    val progress: MigPanel = new MigPanel("ins 0", "", "") {
       add(elapsed, "pushy, wrap")
       add(duration, "pushy")
     }
     add(progress, "pushy")
     add(slider, "pushx, growx")
     add(startStopButton, "align right")
-    add(new ImageButton("images/forward.png", "Step", stepForwardVideo()), "align right")
+    add(new SkipFrameButton(stepForwardVideo()), "align right")
   }
+
   add(controlPanel, "growx")
 
   listenTo(slider)

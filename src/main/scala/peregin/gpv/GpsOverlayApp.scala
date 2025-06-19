@@ -1,21 +1,19 @@
 package peregin.gpv
 
-import java.awt.Dimension
-import java.awt.image.BufferedImage
-import java.io.File
-import java.net.URI
-import javax.swing._
-import info.BuildInfo
 import org.jdesktop.swingx._
-import peregin.gpv.gui.TemplatePanel.TemplateEntry
 import peregin.gpv.gui._
-import peregin.gpv.gui.dashboard.{CyclingDashboard, DashboardPainter}
+import peregin.gpv.gui.dashboard.DashboardPainter
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging, Timed}
 import peregin.gpv.video._
 
+import java.awt.Dimension
+import java.awt.image.BufferedImage
+import java.io.File
+import javax.swing._
 import scala.swing._
 import scala.swing.event.{SelectionChanged, ValueChanged}
+import com.apple.eawt.Application
 
 
 object GpsOverlayApp extends SimpleSwingApplication
@@ -26,6 +24,9 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   // alternative to -Xdock:name on MacOs:
   System.setProperty("com.apple.mrj.application.apple.menu.about.name", "GPS Overlay on video")
+
+  val frameImage = Io.loadImage("images/mountain.png")
+  Application.getApplication.setDockIconImage(frameImage)
 
   Goodies.initLookAndFeel()
 
@@ -40,24 +41,45 @@ object GpsOverlayApp extends SimpleSwingApplication
   transparencySlider.percentage = 80
   private val unitChooser = new ComboBox(Seq("Metric", "Marine","Standard"))
   private val templatePanel = new TemplatePanel(GpsOverlayApp.this)
-  val frame = new MainFrame {
-    contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
-      val toolbar = new JToolBar
-      toolbar.add(new ImageButton("images/new.png", "New", newProject()))
-      toolbar.add(new ImageButton("images/open.png", "Open", openProject()))
-      toolbar.add(new ImageButton("images/save.png", "Save", saveProject()))
-      toolbar.addSeparator()
-      toolbar.add(new ImageButton("images/video.png", "Convert", convertProject()))
-      add(toolbar, "span 2, wrap")
+  System.setProperty("apple.laf.useScreenMenuBar", "true")
+  val frame:MainFrame = new MainFrame {
 
+    val nativeMenuBar = new JMenuBar
+    val fileMenu = new JMenu("File")
+
+    fileMenu.add(new JMenuItem(new AbstractAction("New") {
+      def actionPerformed(e: java.awt.event.ActionEvent): Unit = newProject()
+    }))
+    fileMenu.add(new JMenuItem(new AbstractAction("Open...") {
+      def actionPerformed(e: java.awt.event.ActionEvent): Unit = openProject()
+    }))
+    fileMenu.add(new JMenuItem(new AbstractAction("Save") {
+      def actionPerformed(e: java.awt.event.ActionEvent): Unit = saveProject()
+    }))
+    val exportMenuItem = new JMenuItem(new AbstractAction("Export...") {
+      def actionPerformed(e: java.awt.event.ActionEvent): Unit = convertProject()
+    })
+    fileMenu.add(exportMenuItem)
+
+    fileMenu.addSeparator()
+    fileMenu.add(new JMenuItem(new AbstractAction("Exit") {
+      def actionPerformed(e: java.awt.event.ActionEvent): Unit = sys.exit(0)
+    }))
+
+    nativeMenuBar.add(fileMenu)
+    peer.setJMenuBar(nativeMenuBar)
+
+
+    contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
       private val unitPanel = new MigPanel("ins 0 5 0 5", "", "") {
-        add(new Label("Units"), "")
+        add(new Label("Units"), "span 2")
         add(unitChooser, "")
+        add(new Label("Template"), "span 4")
+        add(templatePanel, "")
       }
       add(unitPanel, "span 2, wrap")
 
-      //add(titled("Video", videoPanel), "pushy, width 60%")
-      add(titled("Video", new MigPanel("ins 0, fill", "[fill]", "[fill]") {
+      val videoTemplatePanel: MigPanel = new MigPanel("ins 0, fill", "[fill]", "[fill]") {
         add(new MigPanel("ins 40 0 40 0, fill", "[fill]", "[fill]") {
           add(new JXLabel("Transparency") {
             setTextRotation(3*Math.PI/2)
@@ -68,21 +90,17 @@ object GpsOverlayApp extends SimpleSwingApplication
           add(transparencySlider, "")
         }, "align left")
         add(videoPanel, "grow, push")
-      }), "pushy, width 60%")
-      add(titled("Telemetry Data", telemetryPanel), "pushy, width 40%, wrap")
-
-      val gaugePanel = new GaugePanel
-      add(titled("Gauges", new ScrollPane(gaugePanel)), "height 30%")
-      add(titled("Dashboard templates", templatePanel), "height 30%, wrap")
-
-      val statusPanel = new JXStatusBar
-      statusPanel.add(statusLabel)
-      add(statusPanel, "pushx, growx")
-      val link = new JXHyperlink()
-      link.setURI(new URI("www.velocorner.com"))
-      add(link, "split, w 150!, align right")
+      }
+      add(videoTemplatePanel, "pushy, width 60%")
+      add(telemetryPanel, "pushy, width 40%, wrap")
     }
   }
+
+  frame.iconImage = frameImage
+  frame.size = new Dimension(1500, 1000)
+  Goodies.center(frame)
+  frame.maximize()
+
 
   private val spinnerWrap = Component.wrap(telemetryPanel.spinner)
   listenTo(transparencySlider, telemetryPanel.spinner, unitChooser.selection)
@@ -95,11 +113,6 @@ object GpsOverlayApp extends SimpleSwingApplication
       setup.units = item
   }
 
-  frame.title = s"GPS data overlay onto video - built ${BuildInfo.buildTime}"
-  frame.iconImage = Io.loadImage("images/video.png")
-  frame.size = new Dimension(1500, 1000)
-  Goodies.center(frame)
-  frame.maximize()
 
   def top: Frame = frame
 
@@ -190,7 +203,7 @@ object GpsOverlayApp extends SimpleSwingApplication
     setup.shift = telemetryPanel.getShift
     setup.transparency = transparencySlider.percentage
     setup.units = unitChooser.selection.item
-    val template = templatePanel.getSelectedEntry.getOrElse(TemplateEntry(new CyclingDashboard {}))
+    val template = templatePanel.getSelectedEntry.get
     val dialog = new ConverterDialog(setup, telemetryPanel.telemetry, template, frame)
     Goodies.center(dialog)
     dialog.open()

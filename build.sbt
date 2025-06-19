@@ -39,7 +39,9 @@ val moreJavaOptions = Seq(
   "--add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED",
   "--add-opens=java.base/java.lang=ALL-UNNAMED",
   "--add-opens=java.base/java.util=ALL-UNNAMED",
-  "--add-opens=java.base/java.net=ALL-UNNAMED"
+  "--add-opens=java.base/java.net=ALL-UNNAMED",
+  "--enable-native-access=ALL-UNNAMED",
+  "--add-exports=java.desktop/com.apple.eawt=ALL-UNNAMED"
 )
 javaOptions ++= moreJavaOptions
 javacOptions ++= Seq("-source", "17", "-target", "17")
@@ -131,8 +133,6 @@ libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion
 libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
 libraryDependencies += "org.swinglabs" % "swingx-core" % "1.6.2-2"
 libraryDependencies += "org.swinglabs" % "swingx-ws" % "1.0"
-libraryDependencies += "com.jgoodies" % "looks" % "2.2.2"
-libraryDependencies += "com.jgoodies" % "jgoodies-common" % "1.8.1"
 libraryDependencies += "com.miglayout" % "miglayout" % "3.7.4"
 libraryDependencies += "org.bytedeco" % "javacv" % javacvVersion
 libraryDependencies += "org.bytedeco" % "javacv-platform" % javacvVersion
@@ -149,6 +149,8 @@ libraryDependencies += "org.joda" % "joda-convert" % "3.0.1"
 libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
 libraryDependencies += "com.google.guava" % "guava" % "33.4.8-jre"
 libraryDependencies += "org.geotools" % "gt-referencing" % geotoolsVersion exclude("javax.media", "jai_core")
+
+libraryDependencies += "com.formdev" % "flatlaf" % "3.4"
 // deprecated from Java 9, needs to be added when
 libraryDependencies += "com.sun.activation" % "javax.activation" % "1.2.0"
 libraryDependencies += "org.specs2" %% "specs2-core" % specs2Version % "test"

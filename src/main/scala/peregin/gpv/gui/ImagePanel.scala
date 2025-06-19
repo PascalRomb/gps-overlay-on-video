@@ -2,8 +2,7 @@ package peregin.gpv.gui
 
 import peregin.gpv.util.ImageConverter
 
-import java.awt.geom.AffineTransform
-import java.awt.{Color, Graphics, Graphics2D, Image}
+import java.awt.{Color, Font, Graphics, Image}
 import javax.swing.JPanel
 
 
@@ -31,6 +30,13 @@ class ImagePanel extends JPanel {
     g.setColor(Color.black)
     g.fillRect(0, 0, width, height)
 
+    if(image.isEmpty) {
+      g.setFont(new Font("SansSerif", Font.BOLD, 18))
+      g.setColor(Color.white)
+      val noData = "NO DATA"
+      g.drawString(noData, width/2 - (noData.length*18)/2 , height/2)
+      return
+    }
     image.foreach { normalLayer =>
       val rotated = ImageConverter.rotateImage(normalLayer, rotation)
       val iw = rotated.getWidth(null)

@@ -9,14 +9,13 @@ import java.awt.geom.AffineTransform
 
 trait DashboardPainter {
 
-  // default dashboard painter
-  @volatile private var dashboard: Dashboard = new CyclingDashboard {}
+  @volatile private var dashboard: Option[Dashboard] = None
 
-  def dash: Dashboard = dashboard
-  def dash_= (d: Dashboard): Unit = dashboard = d
+  def dash: Dashboard = dashboard.get
+  def dash_= (d: Dashboard): Unit = dashboard = Some(d)
 
   def paintGauges(telemetry: Telemetry, tsInMillis: Long, image: BufferedImage, rotation: Double, shiftInMillis: Long, transparencyInPercentage: Double, units: String): Unit = {
-
+    if(dashboard.isEmpty) return
     val g = image.createGraphics
 
     // set transparency
@@ -24,7 +23,7 @@ trait DashboardPainter {
     g.setComposite(AlphaComposite.SrcOver.derive(alpha.toFloat))
 
     // set units and telemetry
-    dashboard.gauges().foreach{ gp =>
+    dashboard.get.gauges().foreach{ gp =>
       gp.units = units
       gp match {
         case painter: ChartPainter =>
@@ -55,7 +54,7 @@ trait DashboardPainter {
       g.transform(at)
 
       // paint dashboard
-      dashboard.paintDashboard(g, width, height, boxSize, sonda)
+      dashboard.get.paintDashboard(g, width, height, boxSize, sonda)
 
       // restore any kind of transformations until this point
       g.setTransform(stash)

@@ -14,6 +14,7 @@ object Sonda {
     InputValue.empty, InputValue.empty, InputValue.empty, InputValue.empty
   )
 
+  //ToDO why? we can use default one.
   def sample(): Sonda = new Sonda(
     time = DateTime.now(), elapsedTime = InputValue.zero,
     location = new GeoPosition(47.366074, 8.541264), // Buerkliplatz, Zurich, Switzerland

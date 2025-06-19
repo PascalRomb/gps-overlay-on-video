@@ -10,7 +10,7 @@ import java.util.function.Consumer
 trait GaugePainter {
 
   lazy val gaugeFont = new Font("Verdana", Font.PLAIN, 12)
-  private var currentInput: InputValue = InputValue.empty
+  private var currentInput: InputValue = defaultInput
   private var debugging = false
   private var displayUnits: String = ""
 
@@ -29,7 +29,7 @@ trait GaugePainter {
   }
 
   final def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int, sonda: Sonda): Unit = {
-    sample(sonda)
+    sample(sonda) //TODO can add a default one?
     paint(g, devHeight, w, h)
   }
 

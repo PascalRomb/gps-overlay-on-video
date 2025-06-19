@@ -40,7 +40,8 @@ val moreJavaOptions = Seq(
   "--add-opens=java.base/java.lang=ALL-UNNAMED",
   "--add-opens=java.base/java.util=ALL-UNNAMED",
   "--add-opens=java.base/java.net=ALL-UNNAMED",
-  "--enable-native-access=ALL-UNNAMED"
+  "--enable-native-access=ALL-UNNAMED",
+  "--add-exports=java.desktop/com.apple.eawt=ALL-UNNAMED"
 )
 javaOptions ++= moreJavaOptions
 javacOptions ++= Seq("-source", "17", "-target", "17")

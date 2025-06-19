@@ -1,6 +1,5 @@
 package peregin.gpv
 
-import info.BuildInfo
 import org.jdesktop.swingx._
 import peregin.gpv.gui._
 import peregin.gpv.gui.dashboard.DashboardPainter
@@ -14,6 +13,7 @@ import java.io.File
 import javax.swing._
 import scala.swing._
 import scala.swing.event.{SelectionChanged, ValueChanged}
+import com.apple.eawt.Application
 
 
 object GpsOverlayApp extends SimpleSwingApplication
@@ -24,6 +24,9 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   // alternative to -Xdock:name on MacOs:
   System.setProperty("com.apple.mrj.application.apple.menu.about.name", "GPS Overlay on video")
+
+  val frameImage = Io.loadImage("images/mountain.png")
+  Application.getApplication.setDockIconImage(frameImage)
 
   Goodies.initLookAndFeel()
 
@@ -93,6 +96,12 @@ object GpsOverlayApp extends SimpleSwingApplication
     }
   }
 
+  frame.iconImage = frameImage
+  frame.size = new Dimension(1500, 1000)
+  Goodies.center(frame)
+  frame.maximize()
+
+
   private val spinnerWrap = Component.wrap(telemetryPanel.spinner)
   listenTo(transparencySlider, telemetryPanel.spinner, unitChooser.selection)
   reactions += {
@@ -104,11 +113,6 @@ object GpsOverlayApp extends SimpleSwingApplication
       setup.units = item
   }
 
-  //TODO want that
-  //frame.iconImage = Io.loadImage("mountain.svg")
-  frame.size = new Dimension(1500, 1000)
-  Goodies.center(frame)
-  frame.maximize()
 
   def top: Frame = frame
 

@@ -31,13 +31,12 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   val direction = new ComboBox(Seq("Forward", "Backward"))
   val spinner = new DurationSpinner
 
-  //TODO want it at the center
   private val controlPanel = new MigPanel("ins 0 5 0 5", "[center][center][center]", "") {
     add(new Label("Shift"), "")
     add(direction, "")
     add(spinner, "")
   }
-  add(controlPanel, "gaptop 5, gapbottom 5")
+  add(controlPanel, "gaptop 5, gapbottom 5, align center")
 
   listenTo(altitude.mouse.clicks, mapKit)
 

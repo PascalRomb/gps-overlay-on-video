@@ -1,16 +1,8 @@
 package peregin.gpv.gui.gauge
 
 import peregin.gpv.model.{InputValue, MinMax, Sonda}
-import peregin.gpv.util.Trigo._
-import peregin.gpv.util.UnitConverter
 
-import java.awt._
-import java.awt.geom.Arc2D
-import java.awt.BasicStroke
-import java.awt.Color
-import java.awt.Font
-import java.awt.Graphics2D
-import java.awt.RenderingHints
+import java.awt.{BasicStroke, Color, Font, Graphics2D}
 import java.awt.geom.Arc2D
 
 
@@ -20,7 +12,6 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
   override def defaultInput: InputValue = dummy
   override def sample(sonda: Sonda): Unit = { input = Option(sonda.speed).getOrElse(defaultInput) }
 
-  //TODO make fonts and stroke width responsive?
   //TODO refactor code
 
   override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
@@ -30,6 +21,7 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
       throw new IllegalArgumentException("Width and Height must be equals!")
     }
     val size = w;
+    println(s"size: $size") //270
 
     // inner arc, min-max arc
     val offsetMultiplier = 1.5
@@ -40,9 +32,9 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
     val arcStartX = (-radius) + xyOffset
     val arcStartY = 0 + xyOffset
 
-    drawArc(g, arcStartX, arcStartY, diameter, new Color(200, 200, 200, 150), currentMaxRatio = 1)
+    drawArc(g,size, arcStartX, arcStartY, diameter, new Color(200, 200, 200, 150), currentMaxRatio = 1)
     // min max label
-    g.setFont(new Font("SansSerif", Font.BOLD, 32))
+    g.setFont(new Font("SansSerif", Font.BOLD, (size*0.11).toInt))
     val fm = g.getFontMetrics
     g.setColor(Color.white)
 
@@ -63,10 +55,10 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
     val currentSpeed = input.current.getOrElse(0.0)
     val currentSpeedRatio = currentSpeed / input.boundary.max
 
-    drawArc(g, arcStartX, arcStartY, diameter, new Color(100, 100, 255), currentMaxRatio = currentSpeedRatio)
+    drawArc(g, size, arcStartX, arcStartY, diameter, new Color(100, 100, 255), currentMaxRatio = currentSpeedRatio)
 
     //speed text
-    g.setFont(new Font("SansSerif", Font.BOLD, 72))
+    g.setFont(new Font("SansSerif", Font.BOLD, (size*0.26).toInt))
     val speedStr = Integer.toString(currentSpeed.toInt)
 
     val fm = g.getFontMetrics
@@ -77,17 +69,17 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
     g.drawString(speedStr,  xyOffset.toInt, (size - xyOffset).toInt)
 
     // unit
-    g.setFont(new Font("SansSerif", Font.BOLD, 24))
+    g.setFont(new Font("SansSerif", Font.BOLD, (size*0.09).toInt))
     val unit = "km/h"
     g.drawString(unit, (xyOffset + speedStringWidth).toInt, (size - speedStringHeight - 10).toInt)
   }
 
 
-  def drawArc(g: Graphics2D, arcStartX: Double, arcStartY: Double, diameter: Double, color: Color, currentMaxRatio: Double): Unit = {
+  def drawArc(g: Graphics2D,size:Double, arcStartX: Double, arcStartY: Double, diameter: Double, color: Color, currentMaxRatio: Double): Unit = {
     val startAngle = 90
     val endAngle = -90 * currentMaxRatio
 
-    g.setStroke(new BasicStroke(12f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
+    g.setStroke(new BasicStroke((0.04*size).toFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
     g.setColor(color)
     val arcType = if (debug) Arc2D.PIE else Arc2D.OPEN
     val baseArc = new Arc2D.Double(arcStartX, arcStartY, diameter, diameter, startAngle, endAngle,arcType)

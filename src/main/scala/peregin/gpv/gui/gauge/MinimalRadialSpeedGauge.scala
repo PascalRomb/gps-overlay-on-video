@@ -21,7 +21,7 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
   override def sample(sonda: Sonda): Unit = { input = Option(sonda.speed).getOrElse(defaultInput) }
 
   private val currentSpeed = 43
-  private val maxSpeed = 100
+  private val maxSpeed = 100 //already in input from sonda??
 
   override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
     super.paint(g, devHeight, w, h)
@@ -30,64 +30,43 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
       throw new IllegalArgumentException("Width and Height must be equals!")
     }
 
-    //    val box = math.min(w, h)
-    //    val strokeWidth = box / 5
-    //    var dia = box - strokeWidth * 1.5
-    //
-    //    // draw a thick open arc
-    //    var x = (w - dia) / 2
-    //    var y = (h - dia) / 2
-    //    val start = 135 // Inizia in basso a sinistra
-    //    val extent = -200
-    //    var arc = new Arc2D.Double(x, y, dia, dia, start, extent, Arc2D.OPEN)
-    //    g.setStroke(new BasicStroke(strokeWidth.toFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
-    //    g.setColor(Color.black)
-    //    g.draw(arc)
-
-
-
-    //    val centerX = w / 2
-    //    val centerY = h / 2 + 30
-    //    val radius = size / 2 - 20
-    //    val arcSize = radius * 3
-    //    val arcSizeWidth = arcSize - 20
-    //    val arcX = centerX - radius
-    //    val arcY = centerY - radius
-
+    val drawTick = true
+    // inner arc, min-max arc
     val offsetMultiplier = 1.5
-    val diameter = w * offsetMultiplier //radius?
+    val diameter = w * offsetMultiplier
     val radius = diameter / 2
 
     val xyOffset = (w - radius) / 2
     val arcStartX = (-radius) + xyOffset
     val arcStartY = 0 + xyOffset
 
+    if(drawTick) {
+      g.setColor(Color.red)
+      g.fillOval(xyOffset.toInt, xyOffset.toInt, 20, 20)
+      g.fillOval((w-xyOffset).toInt, (w-xyOffset).toInt, 20, 20)
+    }
 
-
-    // inner arc
     g.setStroke(new BasicStroke(12f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
-    //g.setColor(new Color(200, 200, 200, 150))
-    g.setColor(Color.red)
-    //val baseArc = new Arc2D.Double(1, 1, h, w, 0, 360, Arc2D.PIE)
-    //val baseArc = new Arc2D.Double(0, 0, diametro, diametro, 90, -90, Arc2D.PIE)
-    //val baseArc = new Arc2D.Double(-raggio, 0, diametro, diametro, 0, -360, Arc2D.PIE)
+    g.setColor(new Color(200, 200, 200, 150))
     val baseArc = new Arc2D.Double(arcStartX, arcStartY, diameter, diameter, 90, -90, Arc2D.PIE)
     g.draw(baseArc)
 
+    //outer, speed arc
+    val offsetMultiplier2 = 1.7
+    val diameter2 = w * offsetMultiplier2
+    val radius2 = diameter2 / 2
 
-//    val offsetMultiplier = 1.5
-//    val arcSize = w * offsetMultiplier //radius?
-//    val startX = (w - arcSize)
-//    val startY = (h - arcSize) / 2
-//
-//
-//    // inner arc
-//    g.setStroke(new BasicStroke(12f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
-//    //g.setColor(new Color(200, 200, 200, 150))
-//    g.setColor(Color.red)
-//    //val baseArc = new Arc2D.Double(1, 1, h, w, 0, 360, Arc2D.PIE)
-//    val baseArc = new Arc2D.Double(startX, startY, arcSize, arcSize, 90, -90, Arc2D.PIE)
-//    g.draw(baseArc)
+    val xyOffset2 = (w - radius2) / 2
+    val arcStartX2 = (-radius2) + xyOffset2
+    val arcStartY2 = 0 + xyOffset2
+
+    g.setStroke(new BasicStroke(12f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
+    g.setColor(new Color(100, 100, 255))
+    val startAngle = 90
+    val angle = startAngle * currentSpeed / maxSpeed
+    val baseArc2 = new Arc2D.Double(arcStartX2, arcStartY2, diameter2, diameter2, startAngle, -angle, Arc2D.PIE)
+    g.draw(baseArc2)
+
 
     //    // min max label //FIXME
     //    g.setFont(new Font("SansSerif", Font.PLAIN, 12))

@@ -21,6 +21,7 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
   override def sample(sonda: Sonda): Unit = { input = Option(sonda.speed).getOrElse(defaultInput) }
 
   //TODO make fonts and stroke width responsive?
+  //TODO refactor code
 
   override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
     super.paint(g, devHeight, w, h)
@@ -51,41 +52,35 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
     g.drawString(maxSpeedStringed, (size-xyOffset-sw - 10).toInt, (size-xyOffset).toInt)
 
     //outer, speed arc
-
     val outerOffsetMultiplier = 1.65
     val outerDiameter = size * outerOffsetMultiplier
     val outerXYOffset = (outerDiameter-diameter)/2
 
-    drawSpeedArc(g, arcStartX-outerXYOffset, arcStartY-outerXYOffset, outerDiameter)
-
+    drawSpeedArc(g, arcStartX-outerXYOffset, arcStartY-outerXYOffset,xyOffset, size, outerDiameter)
   }
 
-  def drawSpeedArc(g: Graphics2D, arcStartX: Double, arcStartY: Double, diameter: Double): Unit = {
-    val currentSpeed = input.current.map(el => el/ input.boundary.max).getOrElse(0.0)
+  def drawSpeedArc(g: Graphics2D, arcStartX: Double, arcStartY: Double, xyOffset:Double, size: Double, diameter: Double): Unit = {
+    val currentSpeed = input.current.getOrElse(0.0)
+    val currentSpeedRatio = currentSpeed / input.boundary.max
 
-    drawArc(g, arcStartX, arcStartY, diameter, new Color(100, 100, 255), currentMaxRatio = currentSpeed)
+    drawArc(g, arcStartX, arcStartY, diameter, new Color(100, 100, 255), currentMaxRatio = currentSpeedRatio)
 
+    //speed text
+    g.setFont(new Font("SansSerif", Font.BOLD, 72))
+    val speedStr = Integer.toString(currentSpeed.toInt)
 
-    // TODO Add this
-    //    // vel text
-    //    g.setFont(new Font("SansSerif", Font.BOLD, 32))
-    //    val speedStr = Integer.toString(currentSpeed)
-    //    var fm = g.getFontMetrics
-    //    var sw = fm.stringWidth(speedStr)
-    //    g.setColor(Color.WHITE)
-    //    g.drawString(speedStr, centerX - sw / 2, centerY - 10)
+    val fm = g.getFontMetrics
+    val speedStringWidth = fm.stringWidth(speedStr)
+    val speedStringHeight = fm.getHeight
 
-    //    // km/h
-    //    g.setFont(new Font("SansSerif", Font.PLAIN, 14))
-    //    val unit = "km/h"
-    //    fm = g.getFontMetrics
-    //    sw = fm.stringWidth(unit)
-    //    g.drawString(unit, centerX - sw / 2, centerY + 10)
-    //
-    //
+    g.setColor(Color.WHITE)
+    g.drawString(speedStr,  xyOffset.toInt, (size - xyOffset).toInt)
+
+    // unit
+    g.setFont(new Font("SansSerif", Font.BOLD, 24))
+    val unit = "km/h"
+    g.drawString(unit, (xyOffset + speedStringWidth).toInt, (size - speedStringHeight - 10).toInt)
   }
-
-
 
 
   def drawArc(g: Graphics2D, arcStartX: Double, arcStartY: Double, diameter: Double, color: Color, currentMaxRatio: Double): Unit = {

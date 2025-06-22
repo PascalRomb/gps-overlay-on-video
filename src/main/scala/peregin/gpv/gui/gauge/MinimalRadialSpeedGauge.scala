@@ -40,10 +40,15 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
     val arcStartY = 0 + xyOffset
 
     drawArc(g, arcStartX, arcStartY, diameter, new Color(200, 200, 200, 150), currentMaxRatio = 1)
-    //    // min max label //FIXME
-    //    g.setFont(new Font("SansSerif", Font.PLAIN, 12))
-    //    g.drawString("0", centerX - radius + 5, centerY)
-    //    g.drawString(Integer.toString(maxSpeed), centerX + radius - 20, centerY)
+    // min max label
+    g.setFont(new Font("SansSerif", Font.BOLD, 32))
+    val fm = g.getFontMetrics
+    g.setColor(Color.white)
+
+    g.drawString("0", xyOffset.toInt, (xyOffset + fm.getHeight).toInt)
+    val maxSpeedStringed = input.boundary.max.toInt.toString
+    val sw = fm.stringWidth(maxSpeedStringed)
+    g.drawString(maxSpeedStringed, (size-xyOffset-sw - 10).toInt, (size-xyOffset).toInt)
 
     //outer, speed arc
 

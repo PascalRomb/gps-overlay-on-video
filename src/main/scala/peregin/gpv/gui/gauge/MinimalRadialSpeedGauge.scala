@@ -31,35 +31,35 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
     val size = w;
 
     // inner arc, min-max arc
-    drawMinMaxArc(g, size)
+    val offsetMultiplier = 1.5
+    val diameter = size * offsetMultiplier
+    val radius = diameter / 2
 
-    //outer, speed arc
-    drawSpeedArc(g, size)
+    val xyOffset = (size - radius) / 2
+    val arcStartX = (-radius) + xyOffset
+    val arcStartY = 0 + xyOffset
 
-  }
-
-  def drawMinMaxArc(g: Graphics2D, size: Double): Unit = {
-    //val minValue = input.boundary.min
-    //val maxValue = input.boundary.max
-    val calculatedOffset = drawArc(g, size, 1.5, new Color(200, 200, 200, 150), currentMaxRatio = 1)
-
-    g.setColor(Color.red)
-    g.fillOval(calculatedOffset.toInt, calculatedOffset.toInt, 20, 20)
-    g.fillOval((size-calculatedOffset).toInt, (size-calculatedOffset).toInt, 20, 20)
-    //TODO draw min max value
-
+    drawArc(g, arcStartX, arcStartY, diameter, new Color(200, 200, 200, 150), currentMaxRatio = 1)
     //    // min max label //FIXME
     //    g.setFont(new Font("SansSerif", Font.PLAIN, 12))
     //    g.drawString("0", centerX - radius + 5, centerY)
     //    g.drawString(Integer.toString(maxSpeed), centerX + radius - 20, centerY)
+
+    //outer, speed arc
+
+    val outerOffsetMultiplier = 1.65
+    val outerDiameter = size * outerOffsetMultiplier
+    val outerXYOffset = (outerDiameter-diameter)/2
+
+    drawSpeedArc(g, arcStartX-outerXYOffset, arcStartY-outerXYOffset, outerDiameter)
+
   }
 
-  def drawSpeedArc(g: Graphics2D, size: Double): Unit = {
+  def drawSpeedArc(g: Graphics2D, arcStartX: Double, arcStartY: Double, diameter: Double): Unit = {
     val currentSpeed = input.current.map(el => el/ input.boundary.max).getOrElse(0.0)
-    val calculatedOffset = drawArc(g, size, 1.7, new Color(100, 100, 255), currentMaxRatio = currentSpeed)
 
-    g.setColor(Color.red)
-    g.fillOval((calculatedOffset).toInt, (size-calculatedOffset).toInt, 20, 20)
+    drawArc(g, arcStartX, arcStartY, diameter, new Color(100, 100, 255), currentMaxRatio = currentSpeed)
+
 
     // TODO Add this
     //    // vel text
@@ -83,14 +83,7 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
 
 
 
-  def drawArc(g: Graphics2D, size: Double, offsetMultiplier: Double, color: Color, currentMaxRatio: Double): Double = {
-    val diameter = size * offsetMultiplier
-    val radius = diameter / 2
-
-    val xyOffset = (size - radius) / 2
-    val arcStartX = (-radius) + xyOffset
-    val arcStartY = 0 + xyOffset
-
+  def drawArc(g: Graphics2D, arcStartX: Double, arcStartY: Double, diameter: Double, color: Color, currentMaxRatio: Double): Unit = {
     val startAngle = 90
     val endAngle = -90 * currentMaxRatio
 
@@ -99,7 +92,5 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
     val arcType = if (debug) Arc2D.PIE else Arc2D.OPEN
     val baseArc = new Arc2D.Double(arcStartX, arcStartY, diameter, diameter, startAngle, endAngle,arcType)
     g.draw(baseArc)
-
-    xyOffset
   }
 }

@@ -26,70 +26,104 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
   override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
     super.paint(g, devHeight, w, h)
 
-//    val box = math.min(w, h)
-//    val strokeWidth = box / 5
-//    var dia = box - strokeWidth * 1.5
-//
-//    // draw a thick open arc
-//    var x = (w - dia) / 2
-//    var y = (h - dia) / 2
-//    val start = 135 // Inizia in basso a sinistra
-//    val extent = -200
-//    var arc = new Arc2D.Double(x, y, dia, dia, start, extent, Arc2D.OPEN)
-//    g.setStroke(new BasicStroke(strokeWidth.toFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
-//    g.setColor(Color.black)
-//    g.draw(arc)
+    if( w != h ) {
+      throw new IllegalArgumentException("Width and Height must be equals!")
+    }
 
-    val size = Math.min(w, h)
-    val centerX = w / 2
-    val centerY = h / 2 + 30
-    val radius = size / 2 - 20
-    val arcSize = radius * 3
-    val arcSizeWidth = arcSize - 20
-    val arcX = centerX - radius
-    val arcY = centerY - radius
+    //    val box = math.min(w, h)
+    //    val strokeWidth = box / 5
+    //    var dia = box - strokeWidth * 1.5
+    //
+    //    // draw a thick open arc
+    //    var x = (w - dia) / 2
+    //    var y = (h - dia) / 2
+    //    val start = 135 // Inizia in basso a sinistra
+    //    val extent = -200
+    //    var arc = new Arc2D.Double(x, y, dia, dia, start, extent, Arc2D.OPEN)
+    //    g.setStroke(new BasicStroke(strokeWidth.toFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
+    //    g.setColor(Color.black)
+    //    g.draw(arc)
+
+
+
+    //    val centerX = w / 2
+    //    val centerY = h / 2 + 30
+    //    val radius = size / 2 - 20
+    //    val arcSize = radius * 3
+    //    val arcSizeWidth = arcSize - 20
+    //    val arcX = centerX - radius
+    //    val arcY = centerY - radius
+
+    val offsetMultiplier = 1.5
+    val diameter = w * offsetMultiplier //radius?
+    val radius = diameter / 2
+
+    val xyOffset = (w - radius) / 2
+    val arcStartX = (-radius) + xyOffset
+    val arcStartY = 0 + xyOffset
+
+
 
     // inner arc
     g.setStroke(new BasicStroke(12f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
-    g.setColor(new Color(200, 200, 200, 150))
-    val baseArc = new Arc2D.Double(arcX, arcY, arcSize, arcSizeWidth, 105, -105, Arc2D.OPEN)
+    //g.setColor(new Color(200, 200, 200, 150))
+    g.setColor(Color.red)
+    //val baseArc = new Arc2D.Double(1, 1, h, w, 0, 360, Arc2D.PIE)
+    //val baseArc = new Arc2D.Double(0, 0, diametro, diametro, 90, -90, Arc2D.PIE)
+    //val baseArc = new Arc2D.Double(-raggio, 0, diametro, diametro, 0, -360, Arc2D.PIE)
+    val baseArc = new Arc2D.Double(arcStartX, arcStartY, diameter, diameter, 90, -90, Arc2D.PIE)
     g.draw(baseArc)
 
-    // min max label //FIXME
-    g.setFont(new Font("SansSerif", Font.PLAIN, 12))
-    g.drawString("0", centerX - radius + 5, centerY)
-    g.drawString(Integer.toString(maxSpeed), centerX + radius - 20, centerY)
 
-    val offset = 20
-    val outerArcX = arcX - offset
-    val outerArcY = arcY - offset
-    val outerArcSize = arcSize + 2 * offset
-    val outerArcSizeWidth = arcSizeWidth + 2 * offset
-
-    g.setColor(new Color(100, 100, 255)) // o altro colore per il bordo
-    g.setStroke(new BasicStroke(12f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
-    val angle = 105.0 * currentSpeed / maxSpeed
-    val outerArc = new Arc2D.Double(outerArcX, outerArcY, outerArcSize, outerArcSizeWidth, 105, -angle, Arc2D.OPEN)
-    g.draw(outerArc)
-
-
-// //FIXME
-//    // vel text
-//    g.setFont(new Font("SansSerif", Font.BOLD, 32))
-//    val speedStr = Integer.toString(currentSpeed)
-//    var fm = g.getFontMetrics
-//    var sw = fm.stringWidth(speedStr)
-//    g.setColor(Color.WHITE)
-//    g.drawString(speedStr, centerX - sw / 2, centerY - 10)
-
-//    // km/h
-//    g.setFont(new Font("SansSerif", Font.PLAIN, 14))
-//    val unit = "km/h"
-//    fm = g.getFontMetrics
-//    sw = fm.stringWidth(unit)
-//    g.drawString(unit, centerX - sw / 2, centerY + 10)
+//    val offsetMultiplier = 1.5
+//    val arcSize = w * offsetMultiplier //radius?
+//    val startX = (w - arcSize)
+//    val startY = (h - arcSize) / 2
 //
 //
+//    // inner arc
+//    g.setStroke(new BasicStroke(12f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
+//    //g.setColor(new Color(200, 200, 200, 150))
+//    g.setColor(Color.red)
+//    //val baseArc = new Arc2D.Double(1, 1, h, w, 0, 360, Arc2D.PIE)
+//    val baseArc = new Arc2D.Double(startX, startY, arcSize, arcSize, 90, -90, Arc2D.PIE)
+//    g.draw(baseArc)
+
+    //    // min max label //FIXME
+    //    g.setFont(new Font("SansSerif", Font.PLAIN, 12))
+    //    g.drawString("0", centerX - radius + 5, centerY)
+    //    g.drawString(Integer.toString(maxSpeed), centerX + radius - 20, centerY)
+    //
+    //    val offset = 20
+    //    val outerArcX = arcX - offset
+    //    val outerArcY = arcY - offset
+    //    val outerArcSize = arcSize + 2 * offset
+    //    val outerArcSizeWidth = arcSizeWidth + 2 * offset
+    //
+    //    g.setColor(new Color(100, 100, 255)) // o altro colore per il bordo
+    //    g.setStroke(new BasicStroke(12f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
+    //    val angle = 105.0 * currentSpeed / maxSpeed
+    //    val outerArc = new Arc2D.Double(outerArcX, outerArcY, outerArcSize, outerArcSizeWidth, 105, -angle, Arc2D.OPEN)
+    //    g.draw(outerArc)
+
+
+    // //FIXME
+    //    // vel text
+    //    g.setFont(new Font("SansSerif", Font.BOLD, 32))
+    //    val speedStr = Integer.toString(currentSpeed)
+    //    var fm = g.getFontMetrics
+    //    var sw = fm.stringWidth(speedStr)
+    //    g.setColor(Color.WHITE)
+    //    g.drawString(speedStr, centerX - sw / 2, centerY - 10)
+
+    //    // km/h
+    //    g.setFont(new Font("SansSerif", Font.PLAIN, 14))
+    //    val unit = "km/h"
+    //    fm = g.getFontMetrics
+    //    sw = fm.stringWidth(unit)
+    //    g.drawString(unit, centerX - sw / 2, centerY + 10)
+    //
+    //
 
 
 

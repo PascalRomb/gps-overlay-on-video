@@ -13,6 +13,8 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
   override def sample(sonda: Sonda): Unit = { input = Option(sonda.speed).getOrElse(defaultInput) }
 
   //TODO refactor code
+  //TODO use GaugeFont in GaugePainter so you can have the same font everywhere
+  // gaugeFont.deriveFont(Font.BOLD, (h * 3 / 8).toFloat)
 
   override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
     super.paint(g, devHeight, w, h)
@@ -21,7 +23,6 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
       throw new IllegalArgumentException("Width and Height must be equals!")
     }
     val size = w;
-    println(s"size: $size") //270
 
     // inner arc, min-max arc
     val offsetMultiplier = 1.5
@@ -70,7 +71,7 @@ class MinimalRadialSpeedGauge() extends GaugePainter {
 
     // unit
     g.setFont(new Font("SansSerif", Font.BOLD, (size*0.09).toInt))
-    val unit = "km/h"
+    val unit = "km/h" //FIXME unit with combobox
     g.drawString(unit, (xyOffset + speedStringWidth).toInt, (size - speedStringHeight - 10).toInt)
   }
 
